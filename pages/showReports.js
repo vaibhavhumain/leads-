@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import downloadDailyLeadReport from '../components/Report';
 import downloadWeeklyLeadReport from '../components/downloadWeeklyLeadReport';
@@ -7,7 +7,16 @@ import PreviousDayReportDownloader from '../components/PreviousDayReportDownload
 
 const ShowReports = () => {
   const today = new Date().toISOString().slice(0, 10);
-  const user = JSON.parse(localStorage.getItem('user'));
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Only run in browser
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   const userId = user?._id;
   const userName = user?.name || user?.username || "User";
 
@@ -93,7 +102,7 @@ const ShowReports = () => {
         </div>
 
         <div className="max-w-md mx-auto mt-10">
-          <PreviousDayReportDownloader userId={userId} userName={userName} />
+          {user && <PreviousDayReportDownloader userId={userId} userName={userName} />}
         </div>
       </div>
     </>
